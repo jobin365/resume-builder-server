@@ -11,7 +11,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 
-mongoose.connect("mongodb://0.0.0.0:27017/rb");
+mongoose.connect(`mongodb+srv://${process.env.MONGOUSR}:${process.env.MONGOPWD}@cluster0.1ktsf.mongodb.net/rb?retryWrites=true&w=majority`);
 
 app.use(express.json());
 
