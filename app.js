@@ -11,7 +11,9 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 
-mongoose.connect(`mongodb+srv://${process.env.MONGOUSR}:${process.env.MONGOPWD}@cluster0.1ktsf.mongodb.net/rb?retryWrites=true&w=majority`);
+mongoose.connect(
+  `mongodb+srv://${process.env.MONGOUSR}:${process.env.MONGOPWD}@cluster0.1ktsf.mongodb.net/rb?retryWrites=true&w=majority`
+);
 
 app.use(express.json());
 
@@ -73,20 +75,7 @@ passport.use(
         {
           googleId: profile.id,
           username: profile.emails[0].value,
-          realname: profile.displayName,
-          resume: {
-            name: "",
-            designation: "",
-            email: "",
-            linkedin: "",
-            github: "",
-            summary: "",
-            skills: "",
-            experience: [],
-            projects: [],
-            education: [],
-            certifications: [],
-          },
+          realname: profile.displayName
         },
         function (err, user) {
           return cb(err, user);
@@ -132,7 +121,21 @@ app.get("/getResume", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.send(docs.resume);
+        if (docs.resume == undefined) {
+          res.send({
+            name: "",
+            designation: "",
+            email: "",
+            linkedin: "",
+            github: "",
+            summary: "",
+            skills: "",
+            experience: [],
+            projects: [],
+            education: [],
+            certifications: [],
+          });
+        } else res.send(docs.resume);
       }
     });
   }
@@ -152,4 +155,14 @@ app.post("/saveResume", (req, res) => {
       }
     );
   }
+});
+
+app.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send({ logout: "success" });
+    }
+  });
 });
