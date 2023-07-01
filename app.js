@@ -11,6 +11,8 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 
+const prod=false;
+
 mongoose.connect(
   `mongodb+srv://${process.env.MONGOUSR}:${process.env.MONGOPWD}@cluster0.1ktsf.mongodb.net/rb?retryWrites=true&w=majority`
 );
@@ -68,7 +70,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "http://localhost:3001/auth/google/rb",
+      callbackURL: prod?"https://resume-builder-sl0y.onrender.com/auth/google/rb":"http://localhost:3001/auth/google/rb",
     },
     function (accessToken, refreshToken, profile, cb) {
       User.findOrCreate(
@@ -98,8 +100,7 @@ app.get(
   "/auth/google/rb",
   passport.authenticate("google", { failureRedirect: "/" }),
   function (req, res) {
-    res.redirect("http://localhost:3000");
-    // res.redirect("/");
+    res.redirect(prod?"/":"http://localhost:3000");
   }
 );
 
